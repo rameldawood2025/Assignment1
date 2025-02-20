@@ -1,10 +1,12 @@
 package org.example;
-
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.ArrayList;
+
+
 
 
 
@@ -26,8 +28,6 @@ class NumberUtilsTest {
 
     @Test
     void testAddWithValidDigits() {
-        // Verifies basic addition without any carry-over. This test is essential for confirming
-        // that the fundamental addition logic is accurate when dealing with smaller numbers.
         List<Integer> left = Arrays.asList(2, 3);
         List<Integer> right = Arrays.asList(4, 2);
         List<Integer> expected = Arrays.asList(6, 5);
@@ -36,26 +36,20 @@ class NumberUtilsTest {
 
     @Test
     void testAddWithCarry() {
-        // Checks the method's ability to handle carries, crucial for correct addition of larger numbers.
-        // This test validates the functionality of the addition logic when the sum exceeds the value of 9.
-        List<Integer> left = Arrays.asList(5, 5);
-        List<Integer> right = Arrays.asList(6, 6);
+        List<Integer> left = Arrays.asList(9, 9);
+        List<Integer> right = Arrays.asList(2, 2);
         List<Integer> expected = Arrays.asList(1, 2, 1);
-        assertEquals(expected, NumberUtils.add(left, right), "Adding 55 + 66 should equal 121 with carry");
+        assertEquals(expected, NumberUtils.add(left, right), "Adding 99 + 22 should equal 121 with carry");
     }
 
     @Test
     void testAddWithNullInput() {
-        // Tests the method's response to null inputs, ensuring that it handles nulls properly by returning null.
-        // It's important to verify the robustness of the method in handling absence of data.
         assertNull(NumberUtils.add(null, Arrays.asList(1, 2)), "Adding null should return null");
         assertNull(NumberUtils.add(Arrays.asList(1, 2), null), "Adding to null should return null");
     }
 
     @Test
     void testAddWithEmptyList() {
-        // Evaluates how the method handles an empty list, which should logically represent zero.
-        // This test ensures that adding zero does not alter the outcome of the addition.
         List<Integer> left = Arrays.asList();
         List<Integer> right = Arrays.asList(1, 2, 3);
         List<Integer> expected = Arrays.asList(1, 2, 3);
@@ -64,8 +58,6 @@ class NumberUtilsTest {
 
     @Test
     void testAddWithLeadingZeros() {
-        // Confirms that the method correctly processes inputs with leading zeros, ensuring
-        // that these zeros do not affect the computational result of the addition.
         List<Integer> left = Arrays.asList(0, 0, 1);
         List<Integer> right = Arrays.asList(0, 9, 9);
         List<Integer> expected = Arrays.asList(1, 0, 0);
@@ -74,17 +66,13 @@ class NumberUtilsTest {
 
     @Test
     void testAddWithInvalidDigits() {
-        // Verifies that the method throws an IllegalArgumentException when presented with digits
-        // outside the valid range (0-9). This test is crucial for maintaining the integrity of the addition operation.
-        List<Integer> left = Arrays.asList(-1, 10, 12);
-        List<Integer> right = Arrays.asList(5);
+        List<Integer> left = Arrays.asList(-1, 10);
+        List<Integer> right = Arrays.asList(1, 2);
         assertThrows(IllegalArgumentException.class, () -> NumberUtils.add(left, right), "Adding with invalid digits should throw IllegalArgumentException");
     }
 
     @Test
     void testAddHandlingOfZeros() {
-        // Tests the addition of lists comprised solely of zeros. It's important to ensure
-        // that the method simplifies the result to a single zero, reflecting correct processing of zero values.
         List<Integer> left = Arrays.asList(0, 0, 0);
         List<Integer> right = Arrays.asList(0, 0, 0);
         List<Integer> expected = Arrays.asList(0);
@@ -92,19 +80,49 @@ class NumberUtilsTest {
     }
 
     @Test
+    void testLongerListsWithCarry() {
+        List<Integer> left = Arrays.asList(9, 9, 9, 9);
+        List<Integer> right = Arrays.asList(1);
+        List<Integer> expected = Arrays.asList(1, 0, 0, 0, 0);
+        assertEquals(expected, NumberUtils.add(left, right), "Adding 9999 + 1 should handle long list with carry correctly");
+    }
+
+    @Test
+    void testBothListsEmpty() {
+        List<Integer> left = new ArrayList<>();
+        List<Integer> right = new ArrayList<>();
+        List<Integer> expected = new ArrayList<>();
+        assertEquals(expected, NumberUtils.add(left, right), "Adding two empty lists should return an empty list");
+    }
+
+    @Test
     void testInputMutability() {
-        // Ensures the method reverses the input lists as part of its operation. This test is crucial
-        // for documenting the side effect of the method that it alters the input data, which must be considered when used.
         List<Integer> left = Arrays.asList(2, 3);
         List<Integer> right = Arrays.asList(4, 2);
-        NumberUtils.add(left, right); // This operation will reverse 'left' and 'right'
+        NumberUtils.add(left, right);
 
-        // Verifies if the lists are reversed as expected after the method call
-        List<Integer> expectedLeft = Arrays.asList(3, 2); // Lists should be reversed post-operation
+        List<Integer> expectedLeft = Arrays.asList(3, 2);
         List<Integer> expectedRight = Arrays.asList(2, 4);
         assertEquals(expectedLeft, left, "Input 'left' should be reversed after the operation.");
         assertEquals(expectedRight, right, "Input 'right' should be reversed after the operation.");
     }
+
+    @Test
+    void testExtremeCarry() {
+        List<Integer> left = Arrays.asList(9, 9, 9, 9, 9);
+        List<Integer> right = Arrays.asList(1);
+        List<Integer> expected = Arrays.asList(1, 0, 0, 0, 0, 0);
+        assertEquals(expected, NumberUtils.add(left, right), "Adding 99999 + 1 should produce 100000");
+    }
+
+    @Test
+    void testVariableLengthInputs() {
+        List<Integer> left = Arrays.asList(1, 2, 3);
+        List<Integer> right = Arrays.asList(9, 8);
+        List<Integer> expected = Arrays.asList(2, 2, 1);
+        assertEquals(expected, NumberUtils.add(left, right), "Adding 123 + 98 should produce 221");
+    }
+
 }
 
 
